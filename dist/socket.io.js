@@ -513,6 +513,15 @@ var io = ('undefined' === typeof module ? {} : module.exports);
   EventEmitter.prototype.addListener = EventEmitter.prototype.on;
 
   /**
+   * Adds a listener
+   *
+   * @api public
+   */
+
+  EventEmitter.prototype.onAny = function (fn) {
+    this.$genericEvent = fn;
+  };
+  /**
    * Adds a volatile listener.
    *
    * @api public
@@ -617,6 +626,12 @@ var io = ('undefined' === typeof module ? {} : module.exports);
    */
 
   EventEmitter.prototype.emit = function (name) {
+    if(this.$genericEvent){
+      var args = Array.prototype.slice.call(arguments, 1);
+      args.unshift(name);
+      this.$genericEvent.apply(this, args);
+    }
+
     if (!this.$events) {
       return false;
     }
